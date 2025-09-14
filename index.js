@@ -3,6 +3,7 @@ const cors = require('cors')
 const app = express()
 require('dotenv').config()
 const port = process.env.PORT || 5000;
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 
 //midelware
@@ -10,8 +11,48 @@ app.use(express.json())
 app.use(cors())
 
 
+
+const uri = `mongodb+srv://${env.process.DB_USER}:${env.process.DB_PASSWORD}@cluster0.qu3bi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+
+
+const database = client.db("ass-10database");
+const sportcollection = database.collection("ass-10-collection");
+
+
+async function run() {
+    try {
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+
+        app.post('/addsportdata', async (req, res) => {
+            const databody = req.body
+            const result = await sportcollection.insertOne(databody)
+            res.send(result)
+        })
+
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+        // Ensures that the client will close when you finish/error
+        // await client.close();
+    }
+}
+run().catch(console.dir);
+
+
+
 app.get('/', (req, res) => {
-    res.send('coffe is running by me ')
+    res.send('turist is running by me ')
 })
 
 app.listen(port, () => {
