@@ -37,7 +37,6 @@ async function run() {
             const databody = sportcollection.find()
             const result = await databody.toArray()
             res.send(result)
-
         })
 
         app.get('/sportdata/:id', async (req, res) => {
@@ -45,12 +44,40 @@ async function run() {
             const quary = { _id: new ObjectId(id) }
             const result = await sportcollection.findOne(quary)
             res.send(result)
-
         })
 
         app.post('/sportdata', async (req, res) => {
             const databody = req.body
             const result = await sportcollection.insertOne(databody)
+            res.send(result)
+        })
+
+        app.put('/sportdata/:id', async (req, res) => {
+            const id = req.params.id
+            const databody = req.body
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const updatedata = {
+                $set: {
+                    photo: databody.photo,
+                    name: databody.name,
+                    countryname: databody.countryname,
+                    location: databody.location,
+                    description: databody.description,
+                    cost: databody.cost,
+                    seasonality: databody.seasonality,
+                    yearcost: databody.yearcost,
+                    time: databody.time,
+                }
+            }
+            const result = await sportcollection.updateOne(filter, updatedata, options)
+            res.send(result)
+        })
+
+        app.delete('/sportdata/:id', async (req, res) => {
+            const id = req.params.id
+            const quary = { _id: new ObjectId(id) }
+            const result = await sportcollection.deleteOne(quary)
             res.send(result)
         })
 
