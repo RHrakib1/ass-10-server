@@ -38,11 +38,19 @@ async function run() {
             const result = await databody.toArray()
             res.send(result)
         })
+        // for user 
+        app.get('/sportdata/email/:email', async (req, res) => {
+            const emailId = req.params.email
+            const query = { email: emailId }
+            const result = await sportcollection.find(query).toArray();
+            res.send(result)
+        })
 
+        //for update 
         app.get('/sportdata/:id', async (req, res) => {
             const id = req.params.id
-            const quary = { _id: new ObjectId(id) }
-            const result = await sportcollection.findOne(quary)
+            const query = { _id: new ObjectId(id) }
+            const result = await sportcollection.findOne(query)
             res.send(result)
         })
 
